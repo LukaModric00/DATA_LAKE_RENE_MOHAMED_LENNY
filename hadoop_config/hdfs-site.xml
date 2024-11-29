@@ -1,0 +1,29 @@
+<configuration>
+    <!-- Path for DataNode storage -->
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>file:/hadoop/dfs/data</value>
+    </property>
+
+    <!-- WebHDFS port -->
+    <property>
+        <name>dfs.datanode.webhdfs.address</name>
+        <value>0.0.0.0:9864</value>
+    </property>
+
+    <!-- Optional: Block size and replication -->
+    <property>
+        <name>dfs.block.size</name>
+        <value>67108864</value> <!-- 64 MB -->
+    </property>
+
+    <property>
+        <name>dfs.replication</name>
+        <value>3</value>
+    </property>
+    <property>
+        <name>dfs.datanode.cache.directories</name>
+        <value>/tmp/hadoop/cache</value>
+    </property>
+</configuration>
+  

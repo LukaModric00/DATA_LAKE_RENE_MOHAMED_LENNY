@@ -1,0 +1,186 @@
+version: '3.9'
+
+services:
+  zookeeper:
+    image: zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - hadoop
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092,OUTSIDE://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_LISTENERS: INSIDE://0.0.0.0:9092,OUTSIDE://0.0.0.0:29092
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+    networks:
+      - hadoop
+    volumes:
+      - ./wait-for-it.sh:/app/wait-for-it.sh
+    command: ["/app/wait-for-it.sh", "zookeeper:2181", "--timeout=60", "--", "/etc/confluent/docker/run"]
+
+  hdfs-permissions:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    container_name: hdfs_permissions
+    depends_on:
+      - namenode
+      - datanode
+    volumes:
+      - ./scripts:/scripts
+    entrypoint: ["/bin/bash", "-c", "hdfs dfs -mkdir -p /raw_zone && hdfs dfs -chown hadoop:hadoop /raw_zone && hdfs dfs -chmod -R 777 /raw_zone"]
+    networks:
+      - hadoop
+
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    container_name: namenode
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - HDFS_CONF_dfs_replication=1
+      - HDFS_CONF_dfs_namenode_datanode_registration_ip___hostname___check=false
+    volumes:
+      - namenode_data:/hadoop/dfs/name
+      - ./start-hdfs.sh:/start-hdfs.sh
+      - ./hadoop_config:/opt/hadoop/etc/hadoop
+    ports:
+      - "9870:9870"
+      - "9000:9000"
+      - "8020:8020"
+    networks:
+      - hadoop
+    command: [ "/bin/bash", "/start-hdfs.sh" ]
+
+  datanode:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - HDFS_CONF_dfs_replication=1
+      - HDFS_CONF_dfs_namenode_datanode_registration_ip___hostname___check=false
+    volumes:
+      - datanode_data:/hadoop/dfs/data
+      - ./init-datanode.sh:/init-datanode.sh
+    depends_on:
+      - namenode
+    networks:
+      - hadoop
+    command: [ "/bin/bash", "/init-datanode.sh" ]
+
+  file-watcher-producer:
+    build:
+      context: ./raw
+      dockerfile: Dockerfile
+    container_name: file_watcher_producer
+    depends_on:
+      - kafka
+      - namenode
+      - datanode
+      - hdfs-permissions
+    networks:
+      - hadoop
+
+  kafka-consumer:
+    build:
+      context: ./consumer
+      dockerfile: Dockerfile.kafka_consumer
+    container_name: kafka_consumer
+    depends_on:
+      - kafka
+      - namenode
+      - datanode
+      - kafka-create-topics
+      - hdfs-permissions
+    networks:
+      - hadoop
+
+  hdfs-handler:
+    build:
+      context: ./hdfs
+      dockerfile: Dockerfile.hdfs_handler
+    container_name: hdfs_handler
+    depends_on:
+      - namenode
+      - datanode
+      - hdfs-permissions
+    networks:
+      - hadoop
+  staging-transformer:
+    build:
+      context: ./staging
+      dockerfile: Dockerfile
+    container_name: staging_transformer
+    depends_on:
+      - namenode
+      - datanode
+      - hdfs-permissions
+    networks:
+      - hadoop
+    volumes:
+      - ./staging:/staging
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: data-lake-api
+    ports:
+      - "5000:5000"
+    depends_on:
+      - namenode
+      - kafka
+    networks:
+      - hadoop
+  kafka-create-topics:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka_create_topics
+    depends_on:
+      - kafka
+      - namenode
+      - datanode    
+    entrypoint: /bin/sh -c "
+      kafka-topics --bootstrap-server kafka:9092 --list | grep transactions || kafka-topics --create --topic transactions --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1 &&
+      kafka-topics --bootstrap-server kafka:9092 --list | grep social_posts || kafka-topics --create --topic social_posts --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1 &&
+      kafka-topics --bootstrap-server kafka:9092 --list | grep ads || kafka-topics --create --topic ads --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1 &&
+      kafka-topics --bootstrap-server kafka:9092 --list | grep logs || kafka-topics --create --topic logs --bootstrap-server kafka:9092 --partitions 1 --replication-factor 1"
+    networks:
+      - hadoop
+  hue:
+    image: gethue/hue:latest
+    container_name: hue
+    ports:
+      - "8888:8888"
+    networks:
+      - hadoop
+    depends_on:
+      - namenode
+      - datanode
+      - hdfs-permissions
+  db:
+    image: postgres:13
+    container_name: postgres
+    environment:
+      POSTGRES_USER: my_user
+      POSTGRES_PASSWORD: my_password
+      POSTGRES_DB: my_database
+    ports:
+      - "5432:5432"
+    networks:
+      - hadoop
+
+volumes:
+  namenode_data:
+  datanode_data:
+  postgres_data:
+networks:
+  hadoop:
+    driver: bridge

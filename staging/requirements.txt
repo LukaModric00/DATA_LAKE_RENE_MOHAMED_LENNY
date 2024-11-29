@@ -1,0 +1,5 @@
+pyspark
+hdfs
+kafka-python
+pandas
+six

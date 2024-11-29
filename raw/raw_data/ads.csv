@@ -1,0 +1,19 @@
+campaign_id,campaign_name,ad_set_name,ad_id,ad_name,platform,objective,start_date,end_date,budget,impressions,clicks,ctr,cpc,conversions,conversion_rate,cost_per_conversion
+1,"Promo Hiver 2024","Groupe A","ad_001","Réduction 20%","Facebook","Conversions","2024-01-01","2024-01-15",500,15000,1200,8.0,0.42,150,12.5,3.33
+2,"Saint Valentin 2024","Groupe B","ad_002","Spécial St Valentin","Instagram","Conversions","2024-02-01","2024-02-14",600,18000,1500,8.3,0.40,180,12.0,3.33
+3,"Offre Fin Janvier 2024","Groupe C","ad_003","Promo Fin de Mois","Facebook","Engagement","2024-01-16","2024-01-31",300,10000,800,8.0,0.38,100,12.5,3.00
+4,"Printemps 2024","Groupe D","ad_004","Offre Printemps","Facebook","Traffic","2024-03-01","2024-03-31",750,20000,1800,9.0,0.39,250,13.9,3.00
+5,"Promotion Début Avril 2024","Groupe E","ad_005","Début Avril Deal","Instagram","Conversions","2024-04-01","2024-04-10",500,15000,1400,9.3,0.35,160,11.4,3.13
+6,"Fête des Mères 2024","Groupe F","ad_006","Cadeau pour Maman","Instagram","Conversions","2024-05-01","2024-05-15",800,25000,2200,8.8,0.36,300,13.6,2.67
+7,"Offre Spéciale Fin Mai 2024","Groupe G","ad_007","Spécial Fin Mai","Facebook","Traffic","2024-05-16","2024-05-31",400,12000,1000,8.3,0.37,120,12.0,3.33
+8,"Été 2024","Groupe H","ad_008","Promotion Été","Facebook","Engagement","2024-06-01","2024-06-30",400,12000,1100,9.2,0.36,100,9.1,4.00
+9,"Début Vacances Été 2024","Groupe I","ad_009","Début des Vacances","Instagram","Conversions","2024-07-01","2024-07-15",550,17000,1400,8.2,0.34,130,9.3,4.23
+10,"Mi-Été 2024","Groupe J","ad_010","Mi-Juillet Promo","Facebook","Traffic","2024-07-16","2024-07-31",450,15000,1300,8.7,0.35,140,10.8,3.21
+11,"Rentrée 2024","Groupe K","ad_011","Offres Rentrée","Facebook","Traffic","2024-09-01","2024-09-30",900,30000,2700,9.0,0.33,350,12.9,2.57
+12,"Offre Spéciale Octobre 2024","Groupe L","ad_012","Début Automne Deal","Instagram","Engagement","2024-10-01","2024-10-15",350,11000,900,8.2,0.37,120,13.3,2.92
+13,"Halloween 2024","Groupe M","ad_013","Spécial Halloween","Facebook","Conversions","2024-10-20","2024-10-31",700,28000,2400,8.6,0.29,300,12.5,2.33
+14,"Black Friday 2024","Groupe N","ad_014","Soldes -50%","Instagram","Conversions","2024-11-24","2024-11-30",1000,50000,6000,12.0,0.25,500,8.3,2.00
+15,"Cyber Monday 2024","Groupe O","ad_015","Promo Cyber Monday","Facebook","Traffic","2024-12-01","2024-12-03",600,20000,1700,8.5,0.28,200,11.8,3.00
+16,"Campagne Noël 2024","Groupe P","ad_016","Cadeau Idéal","Facebook","Conversions","2024-12-10","2024-12-24",800,25000,3500,14.0,0.23,400,11.4,2.00
+17,"Offre Nouvel An 2024","Groupe Q","ad_017","Bonne Année 2025","Instagram","Engagement","2024-12-26","2025-01-05",500,15000,1200,8.0,0.31,150,12.5,3.33
+18,"Soldes Hiver Janvier 2025","Groupe R","ad_018","Soldes Hiver","Facebook","Conversions","2025-01-10","2025-01-31",700,22000,2000,9.1,0.35,220,11.0,3.18

@@ -1,0 +1,11 @@
+FROM python:3.8-slim
+
+WORKDIR /app
+COPY kafka_consumer.py .
+COPY wait-for-it.sh ./wait-for-it.sh
+
+RUN pip install kafka-python hdfs
+
+RUN chmod +x ./wait-for-it.sh
+
+CMD ["./wait-for-it.sh", "kafka:9092 --timeout=60", "--", "python", "kafka_consumer.py"]

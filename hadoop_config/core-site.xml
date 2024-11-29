@@ -1,0 +1,19 @@
+<configuration>
+    <property>
+      <name>fs.defaultFS</name>
+      <value>hdfs://namenode:8020</value>
+    </property>
+  
+    <!-- Enable WebHDFS -->
+    <property>
+      <name>dfs.webhdfs.enabled</name>
+      <value>true</value>
+    </property>
+  
+    <!-- Optionally configure user access -->
+    <property>
+      <name>hadoop.http.staticuser.user</name>
+      <value>hadoop</value>
+    </property>
+  </configuration>
+  

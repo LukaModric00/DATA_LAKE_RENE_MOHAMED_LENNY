@@ -1,0 +1,4 @@
+flask
+pyspark
+hdfs
+kafka-python
